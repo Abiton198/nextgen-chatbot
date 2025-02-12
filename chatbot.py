@@ -1,12 +1,11 @@
-from transformers import ConversationalPipeline, Conversation, AutoModelForCausalLM, AutoTokenizer
+from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
 
 model_name = "facebook/blenderbot-400M-distill"
-model = AutoModelForCausalLM.from_pretrained(model_name)
+model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
 tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-chat = ConversationalPipeline(model=model, tokenizer=tokenizer)
+input_text = "Hello, how are you?"
+inputs = tokenizer(input_text, return_tensors="pt")
 
-conversation = Conversation("Hello, how's your day?")
-chat([conversation])
-
-print(conversation)
+output = model.generate(**inputs)
+print(tokenizer.decode(output[0], skip_special_tokens=True))
