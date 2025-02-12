@@ -1,11 +1,23 @@
-from transformers import AutoModelForSeq2SeqLM, AutoTokenizer
+from transformers import DistilBertTokenizer, DistilBertForSequenceClassification
 
-model_name = "facebook/blenderbot-400M-distill"
-model = AutoModelForSeq2SeqLM.from_pretrained(model_name)
-tokenizer = AutoTokenizer.from_pretrained(model_name)
+# Load DistilBERT model and tokenizer
+model_name = "distilbert-base-uncased"
+model = DistilBertForSequenceClassification.from_pretrained(model_name)
+tokenizer = DistilBertTokenizer.from_pretrained(model_name)
 
 input_text = "Hello, how are you?"
+
+# Tokenize input
 inputs = tokenizer(input_text, return_tensors="pt")
 
-output = model.generate(**inputs)
-print(tokenizer.decode(output[0], skip_special_tokens=True))
+# Forward pass through the model
+outputs = model(**inputs)
+
+# Process the output (e.g., get the logits)
+logits = outputs.logits
+print(logits)
+
+
+# TO DO
+# - install python 3.10 version
+# - re deploy in Render
