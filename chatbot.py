@@ -1,17 +1,12 @@
-from fastapi import FastAPI
-from pydantic import BaseModel
-from transformers import pipeline
+from transformers import ConversationalPipeline, Conversation, AutoModelForCausalLM, AutoTokenizer
 
-# Load Hugging Face chatbot model
-chatbot_pipeline = pipeline("conversational", model="microsoft/DialoGPT-medium")
+model_name = "facebook/blenderbot-400M-distill"
+model = AutoModelForCausalLM.from_pretrained(model_name)
+tokenizer = AutoTokenizer.from_pretrained(model_name)
 
-app = FastAPI()
+chat = ConversationalPipeline(model=model, tokenizer=tokenizer)
 
-class UserMessage(BaseModel):
-    message: str
+conversation = Conversation("Hello, how's your day?")
+chat([conversation])
 
-@app.post("/chat/")
-def chat(user_input: UserMessage):
-    response = chatbot_pipeline(user_input.message)
-    return {"reply": response[0]["generated_text"]}
-
+print(conversation)
